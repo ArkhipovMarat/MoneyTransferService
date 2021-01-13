@@ -1,32 +1,28 @@
 package ru.netology.money_transfer_service.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.netology.money_transfer_service.objects.User;
-import ru.netology.money_transfer_service.service.TransferMoneyService;
-import ru.netology.money_transfer_service.service.ViewUserInfoService;
+import ru.netology.money_transfer_service.entity.requestBody.confirmOperationPostData.OperationId;
+import ru.netology.money_transfer_service.entity.requestBody.transferPostData.TransferPostData;
 
-import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/")
 public class Controller {
-    ViewUserInfoService viewUserInfoService;
-    TransferMoneyService transferMoneyService;
-
-    public Controller(ViewUserInfoService viewUserInfoService, TransferMoneyService transferMoneyService) {
-        this.viewUserInfoService = viewUserInfoService;
-        this.transferMoneyService = transferMoneyService;
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/transfer")
+    public Map<String,String> getMoneyTransferRequest(@RequestBody TransferPostData transferPostData) {
+        Map<String, String> map = new HashMap<>();
+        map.put("operationId", "p1");
+        return map;
     }
 
-    @GetMapping("user/accounts")
-    public String getUserAccounts(@RequestParam String login, @RequestParam String password) {
-        return viewUserInfoService.getUserAccounts(login, password);
-    }
-
-    @GetMapping("user/transfer")
-    public String transferMoneyFromTo(@RequestParam String login, @RequestParam String password,
-                                      @RequestParam String accountFrom, @RequestParam String accountTo,
-                                      @RequestParam BigDecimal ammount) {
-        return transferMoneyService.transferMoneyFromTo(login,password,accountFrom,accountTo,ammount);
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/confirmOperation")
+    public Map<String,String> confirmOperationRequest(@RequestBody OperationId operationId) {
+        Map<String, String> map = new HashMap<>();
+        map.put("operationId", "p1");
+        return map;
     }
 }

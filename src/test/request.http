@@ -1,0 +1,25 @@
+#GET http://localhost:8080/api/posts
+#
+####
+
+POST http://localhost:8888/transfer
+Content-Type: application/json
+
+{
+  "cardFromNumber": "12345",
+  "cardFromValidTill": "11/21",
+  "cardFromCVV": "121",
+  "cardToNumber": "54321",
+  "amount": {
+    "value": 0,
+    "currency": "Rub"
+  }
+}
+
+####
+#
+#DELETE http://localhost:8080/api/posts/4
+#
+####
+#
+#GET http://localhost:8080/api/posts/3
