@@ -1,18 +1,13 @@
-package ru.netology.money_transfer_service.entity.requestBody.transferPostData;
+package ru.netology.money_transfer_service.entity;
 
-public class TransferPostData {
+public class TransferMoneyRequest {
     private String cardFromNumber;
     private String cardFromValidTill;
     private String cardFromCVV;
     private String cardToNumber;
     private Amount amount;
 
-    public TransferPostData(String cardFromNumber, String cardFromValidTill, String cardFromCVV, String cardToNumber, ru.netology.money_transfer_service.entity.requestBody.transferPostData.Amount amount) {
-        this.cardFromNumber = cardFromNumber;
-        this.cardFromValidTill = cardFromValidTill;
-        this.cardFromCVV = cardFromCVV;
-        this.cardToNumber = cardToNumber;
-        this.amount = amount;
+    public TransferMoneyRequest() {
     }
 
     public String getCardFromNumber() {
@@ -47,11 +42,40 @@ public class TransferPostData {
         this.cardToNumber = cardToNumber;
     }
 
-    public ru.netology.money_transfer_service.entity.requestBody.transferPostData.Amount getAmount() {
+    public Amount getAmount() {
         return amount;
     }
 
-    public void setAmount(ru.netology.money_transfer_service.entity.requestBody.transferPostData.Amount amount) {
+    public void setAmount(Amount amount) {
         this.amount = amount;
+    }
+
+    public class Amount {
+        private String currency;
+        private int value;
+
+
+        public Amount() {}
+
+        public Amount(String currency, int value) {
+            this.currency = currency;
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getCurrency() {
+            return currency;
+        }
+
+        public void setCurrency(String currency) {
+            this.currency = currency;
+        }
     }
 }

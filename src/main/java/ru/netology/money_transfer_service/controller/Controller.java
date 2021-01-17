@@ -1,28 +1,35 @@
 package ru.netology.money_transfer_service.controller;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.netology.money_transfer_service.entity.requestBody.confirmOperationPostData.OperationId;
-import ru.netology.money_transfer_service.entity.requestBody.transferPostData.TransferPostData;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.servlet.ModelAndView;
+import ru.netology.money_transfer_service.entity.ConfirmOperationRequest;
+import ru.netology.money_transfer_service.entity.Response;
+import ru.netology.money_transfer_service.entity.TransferMoneyRequest;
+import ru.netology.money_transfer_service.service.TransferMoneyService;
+import ru.netology.money_transfer_service.util.ResponseUtil;
 
 @RestController
 public class Controller {
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/transfer")
-    public Map<String,String> getMoneyTransferRequest(@RequestBody TransferPostData transferPostData) {
-        Map<String, String> map = new HashMap<>();
-        map.put("operationId", "p1");
-        return map;
+    private final TransferMoneyService transferMoneyService;
+
+    public Controller(TransferMoneyService transferMoneyService) {
+        this.transferMoneyService = transferMoneyService;
     }
 
-    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/transfer")
+    public ResponseEntity<Response> createTransferMoneyOperation(@RequestBody TransferMoneyRequest transferMoneyRequest) {
+        return transferMoneyService.createTransferMoneyOperation(transferMoneyRequest);
+    }
+
     @PostMapping("/confirmOperation")
-    public Map<String,String> confirmOperationRequest(@RequestBody OperationId operationId) {
-        Map<String, String> map = new HashMap<>();
-        map.put("operationId", "p1");
-        return map;
+    public ResponseEntity<Response> confirmOperationRequest(@RequestBody ConfirmOperationRequest confirmOperationRequest) {
+        return transferMoneyService.confirmTransferMoneyOperation(confirmOperationRequest);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Response> handleRTE(RuntimeException e) {
+        Response response = ResponseUtil.getServerErrorResponse(e.getMessage());
+        return ResponseEntity.status(response.getHttpStatus()).body(response);
     }
 }
