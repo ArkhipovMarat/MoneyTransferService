@@ -1,4 +1,4 @@
-package ru.netology.money_transfer_service;
+package ru.netology.moneytransferservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

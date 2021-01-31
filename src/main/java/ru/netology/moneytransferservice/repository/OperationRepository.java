@@ -1,7 +1,7 @@
-package ru.netology.money_transfer_service.repository;
+package ru.netology.moneytransferservice.repository;
 
 import org.springframework.stereotype.Repository;
-import ru.netology.money_transfer_service.entity.OperationData;
+import ru.netology.moneytransferservice.entity.OperationData;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

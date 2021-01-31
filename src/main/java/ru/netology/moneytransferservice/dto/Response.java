@@ -1,7 +1,9 @@
-package ru.netology.money_transfer_service.entity;
+package ru.netology.moneytransferservice.dto;
 
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 
+@Data
 public class Response {
     private HttpStatus httpStatus;
     private String operationId;

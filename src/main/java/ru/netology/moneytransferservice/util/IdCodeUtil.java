@@ -1,4 +1,4 @@
-package ru.netology.money_transfer_service.util;
+package ru.netology.moneytransferservice.util;
 
 
 import java.util.UUID;

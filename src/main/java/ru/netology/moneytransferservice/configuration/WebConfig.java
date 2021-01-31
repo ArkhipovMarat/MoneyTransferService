@@ -1,4 +1,4 @@
-package ru.netology.money_transfer_service.configuration;
+package ru.netology.moneytransferservice.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

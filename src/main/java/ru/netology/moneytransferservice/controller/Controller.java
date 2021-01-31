@@ -1,13 +1,12 @@
-package ru.netology.money_transfer_service.controller;
+package ru.netology.moneytransferservice.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import ru.netology.money_transfer_service.entity.ConfirmOperationRequest;
-import ru.netology.money_transfer_service.entity.Response;
-import ru.netology.money_transfer_service.entity.TransferMoneyRequest;
-import ru.netology.money_transfer_service.service.TransferMoneyService;
-import ru.netology.money_transfer_service.util.ResponseUtil;
+import ru.netology.moneytransferservice.dto.ConfirmOperationRequest;
+import ru.netology.moneytransferservice.dto.Response;
+import ru.netology.moneytransferservice.dto.TransferMoneyRequest;
+import ru.netology.moneytransferservice.service.TransferMoneyService;
+import ru.netology.moneytransferservice.util.ResponseUtil;
 
 @RestController
 public class Controller {

@@ -1,7 +1,7 @@
-package ru.netology.money_transfer_service.util;
+package ru.netology.moneytransferservice.util;
 
 import org.springframework.http.HttpStatus;
-import ru.netology.money_transfer_service.entity.Response;
+import ru.netology.moneytransferservice.dto.Response;
 
 public class ResponseUtil {
     private static final int NONE_ID = 0;

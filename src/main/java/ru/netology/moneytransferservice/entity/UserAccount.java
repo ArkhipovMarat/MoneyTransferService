@@ -1,10 +1,13 @@
-package ru.netology.money_transfer_service.entity;
+package ru.netology.moneytransferservice.entity;
 
+import lombok.Data;
+
+@Data
 public class UserAccount {
     private String cardNumber;
     private String cardValid;
     private String cardCVV;
-    private int cardBalance;
+    private volatile int cardBalance;
     private String cardCurrency;
 
     public UserAccount(String cardNumber, String cardValid, String cardCVV, int cardBalance, String cardCurrency) {

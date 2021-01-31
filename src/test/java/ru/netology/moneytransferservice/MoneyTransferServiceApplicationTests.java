@@ -1,4 +1,4 @@
-package ru.netology.money_transfer_service;
+package ru.netology.moneytransferservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
