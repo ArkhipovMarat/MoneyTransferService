@@ -1,18 +1,16 @@
 package ru.netology.moneytransferservice.service;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.netology.moneytransferservice.dto.Response;
 import ru.netology.moneytransferservice.dto.TransferMoneyRequest;
 import ru.netology.moneytransferservice.entity.OperationData;
 import ru.netology.moneytransferservice.entity.UserAccount;
+import ru.netology.moneytransferservice.util.LoggerUtil;
 import ru.netology.moneytransferservice.util.ResponseUtil;
-
 import ru.netology.moneytransferservice.repository.UsersAccountRepository;
-
-import java.util.Scanner;
-
 
 @Service
 public class UserAccountService {
@@ -24,6 +22,8 @@ public class UserAccountService {
     private static final String MESSAGE_SUCCESS_TRANSFER = "Success transfer";
     private static final int NONE_ID = 0;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OperationService.class);
+
     public UserAccountService(UsersAccountRepository usersAccountRepository) {
         this.usersAccountRepository = usersAccountRepository;
     }
@@ -32,8 +32,9 @@ public class UserAccountService {
         UserAccount userAccountFrom = getUserAccount(transferMoneyRequest.getCardFromNumber());
         UserAccount userAccountTo = getUserAccount(transferMoneyRequest.getCardToNumber());
 
-        if (userAccountFrom == null || userAccountTo == null)
+        if (userAccountFrom == null || userAccountTo == null) {
             return ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
+        }
 
         if (!(transferMoneyRequest.getCardFromNumber().equals(userAccountFrom.getCardNumber()) &
                 transferMoneyRequest.getCardFromValidTill().equals(userAccountFrom.getCardValid()) &
@@ -44,7 +45,6 @@ public class UserAccountService {
 
         if (transferMoneyRequest.getAmount().getValue() > userAccountFrom.getCardBalance())
             return ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_INSUFFICIENT_FUNDS, NONE_ID);
-
 
         return ResponseUtil.getResponse(HttpStatus.OK, MESSAGE_SUCCESS_VALIDATION, NONE_ID);
     }
@@ -59,14 +59,17 @@ public class UserAccountService {
 
         synchronized (userAccountFrom) {
             synchronized (userAccountTo) {
-                if (userAccountFrom.getCardBalance() < amount)
+                if (userAccountFrom.getCardBalance() < amount) {
                     return ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_INSUFFICIENT_FUNDS, NONE_ID);
+                }
 
                 userAccountFrom.setCardBalance(userAccountFrom.getCardBalance() - amount);
                 setUserAccount(userAccountFrom);
 
                 userAccountTo.setCardBalance(userAccountTo.getCardBalance() + amount);
                 setUserAccount(userAccountTo);
+
+                LOGGER.info(LoggerUtil.transferMoneyLog(operationData));
             }
         }
         return ResponseUtil.getResponse(HttpStatus.OK, MESSAGE_SUCCESS_TRANSFER, NONE_ID);
@@ -79,6 +82,4 @@ public class UserAccountService {
     public void setUserAccount(UserAccount userAccount) {
         usersAccountRepository.setUserAccount(userAccount);
     }
-
-
 }

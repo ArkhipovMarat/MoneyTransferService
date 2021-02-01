@@ -1,7 +1,8 @@
 package ru.netology.moneytransferservice.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.netology.moneytransferservice.entity.OperationData;
 import ru.netology.moneytransferservice.dto.ConfirmOperationRequest;
@@ -9,6 +10,7 @@ import ru.netology.moneytransferservice.dto.Response;
 import ru.netology.moneytransferservice.dto.TransferMoneyRequest;
 import ru.netology.moneytransferservice.repository.OperationRepository;
 import ru.netology.moneytransferservice.util.IdCodeUtil;
+import ru.netology.moneytransferservice.util.LoggerUtil;
 import ru.netology.moneytransferservice.util.ResponseUtil;
 
 @Service
@@ -19,6 +21,8 @@ public class OperationService {
     private static final String MESSAGE_ERROR_OPERATION = "Not found operation data";
     private static final String MESSAGE_SUCCESS_CONFIRMATION = "Success confirmation";
     private static final int NONE_ID = 0;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OperationService.class);
 
     public OperationService(OperationRepository operationRepository) {
         this.operationRepository = operationRepository;
@@ -34,6 +38,7 @@ public class OperationService {
                 setTransferMoneyRequest(transferMoneyRequest);
 
         operationRepository.addOperation(operationData);
+        LOGGER.info(LoggerUtil.createOperationLog(operationData));
         return operationData;
     }
 

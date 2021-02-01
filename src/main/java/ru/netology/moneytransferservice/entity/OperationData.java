@@ -27,4 +27,12 @@ public class OperationData {
         this.transferMoneyRequest = transferMoneyRequest;
         return this;
     }
+
+    public String getLog() {
+        return  " operationId: " + operationId +
+                " card from: " + transferMoneyRequest.getCardFromNumber() +
+                " card to: " + transferMoneyRequest.getCardToNumber() +
+                " amount: " + transferMoneyRequest.getAmount().getValue() +
+                " currency: " + transferMoneyRequest.getAmount().getCurrency();
+    }
 }
