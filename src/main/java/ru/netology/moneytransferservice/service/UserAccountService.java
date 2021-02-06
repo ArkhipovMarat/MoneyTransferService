@@ -1,7 +1,6 @@
 package ru.netology.moneytransferservice.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.netology.moneytransferservice.dto.Response;
@@ -12,6 +11,7 @@ import ru.netology.moneytransferservice.util.LoggerUtil;
 import ru.netology.moneytransferservice.util.ResponseUtil;
 import ru.netology.moneytransferservice.repository.UsersAccountRepository;
 
+@Slf4j
 @Service
 public class UserAccountService {
     private final UsersAccountRepository usersAccountRepository;
@@ -21,8 +21,6 @@ public class UserAccountService {
     private static final String MESSAGE_SUCCESS_VALIDATION = "Success validation";
     private static final String MESSAGE_SUCCESS_TRANSFER = "Success transfer";
     private static final int NONE_ID = 0;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(OperationService.class);
 
     public UserAccountService(UsersAccountRepository usersAccountRepository) {
         this.usersAccountRepository = usersAccountRepository;
@@ -69,7 +67,7 @@ public class UserAccountService {
                 userAccountTo.setCardBalance(userAccountTo.getCardBalance() + amount);
                 setUserAccount(userAccountTo);
 
-                LOGGER.info(LoggerUtil.transferMoneyLog(operationData));
+                log.info(LoggerUtil.transferMoneyLog(operationData));
             }
         }
         return ResponseUtil.getResponse(HttpStatus.OK, MESSAGE_SUCCESS_TRANSFER, NONE_ID);

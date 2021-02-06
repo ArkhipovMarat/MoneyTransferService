@@ -1,0 +1,15 @@
+2021-02-07 01:56:09.675  INFO 4956 --- [Test worker] r.n.m.TransferMoneyServiceTest           : Starting TransferMoneyServiceTest using Java 15.0.1 on Marat-PC with PID 4956 (started by Marat in D:\Учеба Java\Курсовая - сервис перевода денег\money_transfer_service)
+2021-02-07 01:56:09.679  INFO 4956 --- [Test worker] r.n.m.TransferMoneyServiceTest           : No active profile set, falling back to default profiles: default
+2021-02-07 01:56:11.553  INFO 4956 --- [Test worker] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-02-07 01:56:11.879  INFO 4956 --- [Test worker] r.n.m.TransferMoneyServiceTest           : Started TransferMoneyServiceTest in 2.561 seconds (JVM running for 3.779)
+2021-02-07 01:56:11.961  INFO 4956 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-02-07 01:56:21.019  INFO 8440 --- [Test worker] r.n.m.TransferMoneyServiceTest           : Starting TransferMoneyServiceTest using Java 15.0.1 on Marat-PC with PID 8440 (started by Marat in D:\Учеба Java\Курсовая - сервис перевода денег\money_transfer_service)
+2021-02-07 01:56:21.023  INFO 8440 --- [Test worker] r.n.m.TransferMoneyServiceTest           : No active profile set, falling back to default profiles: default
+2021-02-07 01:56:22.899  INFO 8440 --- [Test worker] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-02-07 01:56:23.251  INFO 8440 --- [Test worker] r.n.m.TransferMoneyServiceTest           : Started TransferMoneyServiceTest in 2.61 seconds (JVM running for 3.836)
+2021-02-07 01:56:23.373  INFO 8440 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-02-07 01:56:33.684  INFO 8696 --- [Test worker] r.n.m.TransferMoneyServiceTest           : Starting TransferMoneyServiceTest using Java 15.0.1 on Marat-PC with PID 8696 (started by Marat in D:\Учеба Java\Курсовая - сервис перевода денег\money_transfer_service)
+2021-02-07 01:56:33.688  INFO 8696 --- [Test worker] r.n.m.TransferMoneyServiceTest           : No active profile set, falling back to default profiles: default
+2021-02-07 01:56:35.678  INFO 8696 --- [Test worker] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-02-07 01:56:36.018  INFO 8696 --- [Test worker] r.n.m.TransferMoneyServiceTest           : Started TransferMoneyServiceTest in 2.642 seconds (JVM running for 3.868)
+2021-02-07 01:56:36.110  INFO 8696 --- [SpringContextShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'

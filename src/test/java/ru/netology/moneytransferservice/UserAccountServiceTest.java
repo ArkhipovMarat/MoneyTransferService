@@ -3,8 +3,8 @@ package ru.netology.moneytransferservice;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.util.ReflectionTestUtils;
 import ru.netology.moneytransferservice.dto.Amount;
 import ru.netology.moneytransferservice.dto.Response;
 import ru.netology.moneytransferservice.dto.TransferMoneyRequest;
@@ -14,14 +14,15 @@ import ru.netology.moneytransferservice.repository.UsersAccountRepository;
 import ru.netology.moneytransferservice.service.UserAccountService;
 import ru.netology.moneytransferservice.util.ResponseUtil;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 public class UserAccountServiceTest {
     @Autowired
     UserAccountService userAccountService;
+
+    @MockBean
+    UsersAccountRepository usersAccountRepository;
 
     private static final String DATA_CARD_FROM_NUMBER = "1111111111111111";
     private static final String DATA_CARD_FROM_CVV = "111";
@@ -34,115 +35,140 @@ public class UserAccountServiceTest {
     private static final int NULL_AMOUNT_VALUE = 0;
     private static final String VERIFICATION_CODE = "0000";
     private static final String OPERATION_ID = "12345f-12345";
-    private static final String USERS_ACCOUNT_REPOSITORY = "usersAccountRepository";
     private static final int NONE_ID = 0;
-
     private static final String MESSAGE_ERROR_INPUT = "Error input data";
     private static final String MESSAGE_INSUFFICIENT_FUNDS = "Insufficient funds";
     private static final String MESSAGE_SUCCESS_VALIDATION = "Success validation";
     private static final String MESSAGE_SUCCESS_TRANSFER = "Success transfer";
 
-    private Response successValidationResult;
-    private Response errorInputDataResult;
-    private Response insufficientFundsResult;
-    private Response successTransferResult;
-
-    @BeforeAll
-    void init() {
-        // RESULTS
-        successValidationResult = ResponseUtil.getResponse(HttpStatus.OK, MESSAGE_SUCCESS_VALIDATION, NONE_ID);
-        errorInputDataResult = ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
-        insufficientFundsResult = ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_INSUFFICIENT_FUNDS, NONE_ID);
-        successTransferResult = ResponseUtil.getResponse(HttpStatus.OK, MESSAGE_SUCCESS_TRANSFER, NONE_ID);
-    }
-
-    @Test
-    void validateTransferMoneyRequestTest() {
-        // CASE: SUCCESS VALIDATION
-        Assertions.assertEquals(successValidationResult, getTestResultSuccessValidation());
-
-        // CASE: ERROR INPUT DATA/USER ACCOUNT NOT FOUND
-        Assertions.assertEquals(errorInputDataResult, getTestResultWrongCVV());
-        Assertions.assertEquals(errorInputDataResult, getTestResultWrongCardFromNumber());
-        Assertions.assertEquals(errorInputDataResult, getTestResultWrongCardToNumber());
-        Assertions.assertEquals(errorInputDataResult, getTestResultWrongValidTill());
-
-        // CASE: INSUFFICIENT FUNDS
-        Assertions.assertEquals(insufficientFundsResult, getTestResultInsufficientFunds());
-    }
-
-    @Test
-    void transferMoneyTest() {
-        UsersAccountRepository usersAccountRepository = mock(UsersAccountRepository.class);
-        ReflectionTestUtils.setField(userAccountService, USERS_ACCOUNT_REPOSITORY, usersAccountRepository);
-
-        // CASE: SUCCESS TRANSFER
+    @BeforeEach
+    public void mockUserAccountRepository() {
         when(usersAccountRepository.getUserAccount(DATA_CARD_TO_NUMBER)).thenReturn(getUserAccountTo());
         when(usersAccountRepository.getUserAccount(DATA_CARD_FROM_NUMBER)).thenReturn(getUserAccountFrom());
-
-        Assertions.assertEquals(successTransferResult, getTestResultSuccessTransfer());
-        Assertions.assertEquals(NULL_AMOUNT_VALUE, getTestResultCardBalance(DATA_CARD_FROM_NUMBER));
-        Assertions.assertEquals((AMOUNT_VALUE + AMOUNT_VALUE), getTestResultCardBalance(DATA_CARD_TO_NUMBER));
-
-        // CASE: INSUFFICIENT FUNDS
-        when(usersAccountRepository.getUserAccount(DATA_CARD_TO_NUMBER)).thenReturn(getUserAccountTo());
-        when(usersAccountRepository.getUserAccount(DATA_CARD_FROM_NUMBER)).thenReturn(getUserAccountFrom());
-
-        Assertions.assertEquals(insufficientFundsResult, getTestResultErrorTransfer());
     }
 
-    Response getTestResultSuccessValidation() {
-        return userAccountService.validateTransferMoneyRequest(getTransferMoneyRequest());
+    // SUCCESS VALIDATION
+    @Test
+    void validateTransferMoneyRequestSuccessValidation() {
+        Response successValidationResult =
+                ResponseUtil.getResponse(HttpStatus.OK, MESSAGE_SUCCESS_VALIDATION, NONE_ID);
+
+        Response testResult = userAccountService.validateTransferMoneyRequest(getTransferMoneyRequest());
+
+        Assertions.assertEquals(successValidationResult, testResult);
     }
 
-    Response getTestResultWrongCVV() {
+    // ERROR INPUT DATA: WRONG CVV
+    @Test
+    void validateTransferMoneyRequestWrongCvv() {
+        Response errorInputDataResult =
+                ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
+
         TransferMoneyRequest transferMoneyRequest = getTransferMoneyRequest();
         transferMoneyRequest.setCardFromCVV("");
-        return userAccountService.validateTransferMoneyRequest(transferMoneyRequest);
+
+        Response testResult = userAccountService.validateTransferMoneyRequest(transferMoneyRequest);
+
+        Assertions.assertEquals(errorInputDataResult, testResult);
     }
 
-    Response getTestResultWrongCardFromNumber() {
+    // ERROR INPUT DATA: WRONG CARD FROM NUMBER
+    @Test
+    void validateTransferMoneyRequestWrongCardFromNumber() {
+        Response errorInputDataResult =
+                ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
+
         TransferMoneyRequest transferMoneyRequest = getTransferMoneyRequest();
         transferMoneyRequest.setCardFromNumber("");
-        return userAccountService.validateTransferMoneyRequest(transferMoneyRequest);
+
+        Response testResult = userAccountService.validateTransferMoneyRequest(transferMoneyRequest);
+
+        Assertions.assertEquals(errorInputDataResult, testResult);
     }
 
-    Response getTestResultWrongCardToNumber() {
+    // ERROR INPUT DATA: WRONG CARD TO NUMBER
+    @Test
+    void validateTransferMoneyRequestWrongCardToNumber() {
+        Response errorInputDataResult =
+                ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
+
         TransferMoneyRequest transferMoneyRequest = getTransferMoneyRequest();
         transferMoneyRequest.setCardToNumber("");
-        return userAccountService.validateTransferMoneyRequest(transferMoneyRequest);
+
+        Response testResult = userAccountService.validateTransferMoneyRequest(transferMoneyRequest);
+
+        Assertions.assertEquals(errorInputDataResult, testResult);
     }
 
-    Response getTestResultWrongValidTill() {
+    // ERROR INPUT DATA: WRONG CARD FROM VALID TILL
+    @Test
+    void validateTransferMoneyRequestWrongCardFromValidTill() {
+        Response errorInputDataResult =
+                ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
+
         TransferMoneyRequest transferMoneyRequest = getTransferMoneyRequest();
         transferMoneyRequest.setCardFromValidTill("");
-        return userAccountService.validateTransferMoneyRequest(transferMoneyRequest);
+
+        Response testResult = userAccountService.validateTransferMoneyRequest(transferMoneyRequest);
+
+        Assertions.assertEquals(errorInputDataResult, testResult);
     }
 
-    Response getTestResultInsufficientFunds() {
+    // ERROR INPUT DATA: INSUFFICIENT FUNDS
+    @Test
+    void validateTransferMoneyRequestInsufficientFunds() {
+        Response insufficientFundsResult =
+                ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_INSUFFICIENT_FUNDS, NONE_ID);
+
         TransferMoneyRequest transferMoneyRequest = getTransferMoneyRequest();
         transferMoneyRequest.setAmount(new Amount(CURRENCY, WRONG_AMOUNT_VALUE));
-        return userAccountService.validateTransferMoneyRequest(transferMoneyRequest);
+
+        Response testResult = userAccountService.validateTransferMoneyRequest(transferMoneyRequest);
+
+        Assertions.assertEquals(insufficientFundsResult, testResult);
     }
 
-    Response getTestResultSuccessTransfer() {
-        return userAccountService.transferMoney(getOperationData());
+    // SUCCESS TRANSFER
+    @Test
+    void transferMoneyTest() {
+        UserAccount userAccountTo = getUserAccountTo();
+        UserAccount userAccountFrom = getUserAccountFrom();
+
+        when(usersAccountRepository.getUserAccount(DATA_CARD_TO_NUMBER)).thenReturn(userAccountTo);
+        when(usersAccountRepository.getUserAccount(DATA_CARD_FROM_NUMBER)).thenReturn(userAccountFrom);
+
+        Response successTransferResult =
+                ResponseUtil.getResponse(HttpStatus.OK, MESSAGE_SUCCESS_TRANSFER, NONE_ID);
+
+        OperationData operationData = new OperationData(OPERATION_ID, VERIFICATION_CODE, getTransferMoneyRequest());
+
+        Response testResult = userAccountService.transferMoney(operationData);
+
+        Assertions.assertEquals(successTransferResult, testResult);
+        Assertions.assertEquals(NULL_AMOUNT_VALUE, userAccountFrom.getCardBalance());
+        Assertions.assertEquals((AMOUNT_VALUE + AMOUNT_VALUE), userAccountTo.getCardBalance());
     }
 
-    Response getTestResultErrorTransfer() {
-        OperationData operationData = getOperationData();
-        operationData.getTransferMoneyRequest().getAmount().setValue(WRONG_AMOUNT_VALUE);
-        return userAccountService.transferMoney(operationData);
+    // INSUFFICIENT FUNDS
+    @Test
+    void transferMoneyTestInsufficientFunds() {
+        Response insufficientFundsResult
+                = ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_INSUFFICIENT_FUNDS, NONE_ID);
+
+        TransferMoneyRequest transferMoneyRequest = getTransferMoneyRequest();
+        transferMoneyRequest.getAmount().setValue(WRONG_AMOUNT_VALUE);
+        OperationData operationData = new OperationData(OPERATION_ID, VERIFICATION_CODE, transferMoneyRequest);
+
+        Response testResult = userAccountService.transferMoney(operationData);
+
+        Assertions.assertEquals(insufficientFundsResult, testResult);
     }
 
+    // HELP METHODS
     TransferMoneyRequest getTransferMoneyRequest() {
         return new TransferMoneyRequest(DATA_CARD_FROM_NUMBER,
                 DATA_CARD_FROM_VALID_TILL, DATA_CARD_FROM_CVV, DATA_CARD_TO_NUMBER,
                 new Amount(CURRENCY, AMOUNT_VALUE));
-    }
-
-    OperationData getOperationData() {
-        return new OperationData(OPERATION_ID, VERIFICATION_CODE, getTransferMoneyRequest());
     }
 
     UserAccount getUserAccountTo() {
@@ -153,9 +179,5 @@ public class UserAccountServiceTest {
     UserAccount getUserAccountFrom() {
         return new UserAccount(DATA_CARD_FROM_NUMBER,
                 DATA_CARD_FROM_VALID_TILL, DATA_CARD_FROM_CVV, AMOUNT_VALUE, CURRENCY);
-    }
-
-    int getTestResultCardBalance(String cardNumber) {
-        return userAccountService.getUserAccount(cardNumber).getCardBalance();
     }
 }
