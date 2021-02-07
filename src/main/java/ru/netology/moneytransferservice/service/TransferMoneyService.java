@@ -31,7 +31,7 @@ public class TransferMoneyService {
     public ResponseEntity<Response> confirmTransferMoneyOperation(ConfirmOperationRequest confirmOperationRequest) {
         Response response = operationService.confirmOperationRequest(confirmOperationRequest);
 
-       if (!HttpStatus.BAD_REQUEST.equals(response.getHttpStatus())) {
+        if (!HttpStatus.BAD_REQUEST.equals(response.getHttpStatus())) {
             String operationId = confirmOperationRequest.getOperationId();
             OperationData operationData = operationService.getOperationData(operationId);
 

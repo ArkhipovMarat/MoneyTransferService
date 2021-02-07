@@ -22,7 +22,7 @@ import ru.netology.moneytransferservice.util.ResponseUtil;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class TransferMoneyServiceTest {
+public class TransferMoneyServiceUnitTest {
     @Autowired
     TransferMoneyService transferMoneyService;
 
@@ -32,6 +32,7 @@ public class TransferMoneyServiceTest {
     @MockBean
     UserAccountService userAccountService;
 
+    // TEST INPUT DATA
     private static final String DATA_CARD_FROM_NUMBER = "1111111111111111";
     private static final String DATA_CARD_FROM_CVV = "111";
     private static final String DATA_CARD_FROM_VALID_TILL = "11/21";
@@ -40,25 +41,28 @@ public class TransferMoneyServiceTest {
     private static final int AMOUNT_VALUE = 1000;
     private static final String VERIFICATION_CODE = "0000";
     private static final String OPERATION_ID = "12345f-12345";
+    private static final int NONE_ID = 0;
+
+    // RESPONSES
     private static final String MESSAGE_ERROR_INPUT = "Error input data";
     private static final String MESSAGE_SUCCESS_CONFIRMATION = "Success confirmation";
     private static final String MESSAGE_SUCCESS_TRANSFER = "Success transfer";
-    private static final int NONE_ID = 0;
 
-    // RESPONSE ENTITY: SUCCESS CONFIRMATION
+    // SUCCESS CONFIRMATION
     @Test
-    void createTransferMoneyOperationSuccessConfirmation() {
+    void createTransferMoneyOperation_WhenSuccessConfirmation() {
         ResponseEntity<Response> successConfirmationEntityResult = ResponseEntity.status(HttpStatus.OK)
                 .body(new Response(HttpStatus.OK, OPERATION_ID, MESSAGE_SUCCESS_CONFIRMATION, NONE_ID));
 
         Response successConfirmationResponse = new Response(HttpStatus.OK, "", MESSAGE_SUCCESS_CONFIRMATION, NONE_ID);
-        TransferMoneyRequest transferMoneyRequest = getTransferMoneyRequest();
-        OperationData operationData = new OperationData(OPERATION_ID, VERIFICATION_CODE, transferMoneyRequest);
 
+        TransferMoneyRequest transferMoneyRequest = getTransferMoneyRequest();
         when(userAccountService.validateTransferMoneyRequest(transferMoneyRequest)).thenReturn(successConfirmationResponse);
+
+        OperationData operationData = new OperationData(OPERATION_ID, VERIFICATION_CODE, transferMoneyRequest);
         when(operationService.createOperation(transferMoneyRequest)).thenReturn(operationData);
 
-        ResponseEntity<Response> testResult = transferMoneyService.createTransferMoneyOperation(getTransferMoneyRequest());
+        ResponseEntity<Response> testResult = transferMoneyService.createTransferMoneyOperation(transferMoneyRequest);
 
         InOrder inOrder = Mockito.inOrder(userAccountService, operationService);
         inOrder.verify(userAccountService).validateTransferMoneyRequest(transferMoneyRequest);
@@ -67,9 +71,9 @@ public class TransferMoneyServiceTest {
         Assertions.assertEquals(successConfirmationEntityResult, testResult);
     }
 
-    // RESPONSE ENTITY: BAD REQUEST
+    // BAD REQUEST
     @Test
-    void createTransferMoneyOperationBadRequest() {
+    void createTransferMoneyOperation_WhenBadRequest() {
         Response badRequestResponse = ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
 
         ResponseEntity<Response> badRequestEntityResult = ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -84,7 +88,7 @@ public class TransferMoneyServiceTest {
 
     // BAD REQUEST
     @Test
-    void confirmTransferMoneyOperationBadRequest() {
+    void confirmTransferMoneyOperation_WhenBadRequest() {
         Response badRequestResponse = ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
 
         ResponseEntity<Response> badRequestEntityResult = ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -99,9 +103,10 @@ public class TransferMoneyServiceTest {
 
     // SUCCESS TRANSFER
     @Test
-    void confirmTransferMoneyOperationSuccessTransfer() {
+    void confirmTransferMoneyOperation_WhenSuccessTransfer() {
         Response successConfirmationResponse = ResponseUtil.getResponse(HttpStatus.OK, MESSAGE_SUCCESS_CONFIRMATION, NONE_ID)
                 .setOperationId(OPERATION_ID);
+
         OperationData operationData = new OperationData(OPERATION_ID, VERIFICATION_CODE, getTransferMoneyRequest());
         Response successTransferResponse = ResponseUtil.getResponse(HttpStatus.OK, MESSAGE_SUCCESS_TRANSFER, NONE_ID);
 
@@ -113,7 +118,7 @@ public class TransferMoneyServiceTest {
                 .body(successTransferResponse);
         ResponseEntity<Response> testResult = transferMoneyService.confirmTransferMoneyOperation(getConfirmOperationRequest());
 
-        InOrder inOrder = Mockito.inOrder(operationService,userAccountService);
+        InOrder inOrder = Mockito.inOrder(operationService, userAccountService);
         inOrder.verify(operationService).getOperationData(OPERATION_ID);
         inOrder.verify(userAccountService).transferMoney(operationData);
         inOrder.verify(operationService).removeOperation(OPERATION_ID);

@@ -37,7 +37,6 @@ public class OperationService {
 
         operationRepository.addOperation(operationData);
         log.info(LoggerUtil.createOperationLog(operationData));
-//        LOGGER.info();
         return operationData;
     }
 
@@ -45,7 +44,7 @@ public class OperationService {
         String operationId = confirmOperationRequest.getOperationId();
         OperationData operationData = operationRepository.getOperation(operationId);
 
-        if (operationData==null)
+        if (operationData == null)
             return ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_OPERATION, NONE_ID);
 
         if (!(confirmOperationRequest.getCode().equals(operationData.getCode())))

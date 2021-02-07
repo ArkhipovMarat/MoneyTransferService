@@ -17,13 +17,14 @@ import ru.netology.moneytransferservice.util.ResponseUtil;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class UserAccountServiceTest {
+public class UserAccountServiceUnitTest {
     @Autowired
     UserAccountService userAccountService;
 
     @MockBean
     UsersAccountRepository usersAccountRepository;
 
+    // TEST INPUT DATA
     private static final String DATA_CARD_FROM_NUMBER = "1111111111111111";
     private static final String DATA_CARD_FROM_CVV = "111";
     private static final String DATA_CARD_TO_CVV = "222";
@@ -36,6 +37,8 @@ public class UserAccountServiceTest {
     private static final String VERIFICATION_CODE = "0000";
     private static final String OPERATION_ID = "12345f-12345";
     private static final int NONE_ID = 0;
+
+    // RESPONSES
     private static final String MESSAGE_ERROR_INPUT = "Error input data";
     private static final String MESSAGE_INSUFFICIENT_FUNDS = "Insufficient funds";
     private static final String MESSAGE_SUCCESS_VALIDATION = "Success validation";
@@ -49,9 +52,8 @@ public class UserAccountServiceTest {
 
     // SUCCESS VALIDATION
     @Test
-    void validateTransferMoneyRequestSuccessValidation() {
-        Response successValidationResult =
-                ResponseUtil.getResponse(HttpStatus.OK, MESSAGE_SUCCESS_VALIDATION, NONE_ID);
+    void validateTransferMoneyRequest_WhenSuccessValidation() {
+        Response successValidationResult = ResponseUtil.getResponse(HttpStatus.OK, MESSAGE_SUCCESS_VALIDATION, NONE_ID);
 
         Response testResult = userAccountService.validateTransferMoneyRequest(getTransferMoneyRequest());
 
@@ -60,9 +62,8 @@ public class UserAccountServiceTest {
 
     // ERROR INPUT DATA: WRONG CVV
     @Test
-    void validateTransferMoneyRequestWrongCvv() {
-        Response errorInputDataResult =
-                ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
+    void validateTransferMoneyRequest_WhenErrorCvv() {
+        Response errorInputDataResult = ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
 
         TransferMoneyRequest transferMoneyRequest = getTransferMoneyRequest();
         transferMoneyRequest.setCardFromCVV("");
@@ -74,9 +75,8 @@ public class UserAccountServiceTest {
 
     // ERROR INPUT DATA: WRONG CARD FROM NUMBER
     @Test
-    void validateTransferMoneyRequestWrongCardFromNumber() {
-        Response errorInputDataResult =
-                ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
+    void validateTransferMoneyRequest_WhenErrorCardFromNumber() {
+        Response errorInputDataResult = ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
 
         TransferMoneyRequest transferMoneyRequest = getTransferMoneyRequest();
         transferMoneyRequest.setCardFromNumber("");
@@ -88,7 +88,7 @@ public class UserAccountServiceTest {
 
     // ERROR INPUT DATA: WRONG CARD TO NUMBER
     @Test
-    void validateTransferMoneyRequestWrongCardToNumber() {
+    void validateTransferMoneyRequest_WhenErrorCardToNumber() {
         Response errorInputDataResult =
                 ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
 
@@ -102,9 +102,8 @@ public class UserAccountServiceTest {
 
     // ERROR INPUT DATA: WRONG CARD FROM VALID TILL
     @Test
-    void validateTransferMoneyRequestWrongCardFromValidTill() {
-        Response errorInputDataResult =
-                ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
+    void validateTransferMoneyRequest_WhenErrorCardFromValidTill() {
+        Response errorInputDataResult = ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
 
         TransferMoneyRequest transferMoneyRequest = getTransferMoneyRequest();
         transferMoneyRequest.setCardFromValidTill("");
@@ -116,9 +115,8 @@ public class UserAccountServiceTest {
 
     // ERROR INPUT DATA: INSUFFICIENT FUNDS
     @Test
-    void validateTransferMoneyRequestInsufficientFunds() {
-        Response insufficientFundsResult =
-                ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_INSUFFICIENT_FUNDS, NONE_ID);
+    void validateTransferMoneyRequest_WhenInsufficientFunds() {
+        Response insufficientFundsResult = ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_INSUFFICIENT_FUNDS, NONE_ID);
 
         TransferMoneyRequest transferMoneyRequest = getTransferMoneyRequest();
         transferMoneyRequest.setAmount(new Amount(CURRENCY, WRONG_AMOUNT_VALUE));
@@ -130,15 +128,14 @@ public class UserAccountServiceTest {
 
     // SUCCESS TRANSFER
     @Test
-    void transferMoneyTest() {
+    void transferMoney_WhenSuccessTransfer() {
         UserAccount userAccountTo = getUserAccountTo();
         UserAccount userAccountFrom = getUserAccountFrom();
 
         when(usersAccountRepository.getUserAccount(DATA_CARD_TO_NUMBER)).thenReturn(userAccountTo);
         when(usersAccountRepository.getUserAccount(DATA_CARD_FROM_NUMBER)).thenReturn(userAccountFrom);
 
-        Response successTransferResult =
-                ResponseUtil.getResponse(HttpStatus.OK, MESSAGE_SUCCESS_TRANSFER, NONE_ID);
+        Response successTransferResult = ResponseUtil.getResponse(HttpStatus.OK, MESSAGE_SUCCESS_TRANSFER, NONE_ID);
 
         OperationData operationData = new OperationData(OPERATION_ID, VERIFICATION_CODE, getTransferMoneyRequest());
 
@@ -151,9 +148,8 @@ public class UserAccountServiceTest {
 
     // INSUFFICIENT FUNDS
     @Test
-    void transferMoneyTestInsufficientFunds() {
-        Response insufficientFundsResult
-                = ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_INSUFFICIENT_FUNDS, NONE_ID);
+    void transferMoney_WhenInsufficientFunds() {
+        Response insufficientFundsResult = ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_INSUFFICIENT_FUNDS, NONE_ID);
 
         TransferMoneyRequest transferMoneyRequest = getTransferMoneyRequest();
         transferMoneyRequest.getAmount().setValue(WRONG_AMOUNT_VALUE);
@@ -166,18 +162,15 @@ public class UserAccountServiceTest {
 
     // HELP METHODS
     TransferMoneyRequest getTransferMoneyRequest() {
-        return new TransferMoneyRequest(DATA_CARD_FROM_NUMBER,
-                DATA_CARD_FROM_VALID_TILL, DATA_CARD_FROM_CVV, DATA_CARD_TO_NUMBER,
+        return new TransferMoneyRequest(DATA_CARD_FROM_NUMBER, DATA_CARD_FROM_VALID_TILL, DATA_CARD_FROM_CVV, DATA_CARD_TO_NUMBER,
                 new Amount(CURRENCY, AMOUNT_VALUE));
     }
 
     UserAccount getUserAccountTo() {
-        return new UserAccount(DATA_CARD_TO_NUMBER,
-                DATA_CARD_FROM_VALID_TILL, DATA_CARD_TO_CVV, AMOUNT_VALUE, CURRENCY);
+        return new UserAccount(DATA_CARD_TO_NUMBER, DATA_CARD_FROM_VALID_TILL, DATA_CARD_TO_CVV, AMOUNT_VALUE, CURRENCY);
     }
 
     UserAccount getUserAccountFrom() {
-        return new UserAccount(DATA_CARD_FROM_NUMBER,
-                DATA_CARD_FROM_VALID_TILL, DATA_CARD_FROM_CVV, AMOUNT_VALUE, CURRENCY);
+        return new UserAccount(DATA_CARD_FROM_NUMBER, DATA_CARD_FROM_VALID_TILL, DATA_CARD_FROM_CVV, AMOUNT_VALUE, CURRENCY);
     }
 }

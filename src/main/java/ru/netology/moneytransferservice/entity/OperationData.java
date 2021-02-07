@@ -29,7 +29,7 @@ public class OperationData {
     }
 
     public String getLog() {
-        return  " operationId: " + operationId +
+        return " operationId: " + operationId +
                 " card from: " + transferMoneyRequest.getCardFromNumber() +
                 " card to: " + transferMoneyRequest.getCardToNumber() +
                 " amount: " + transferMoneyRequest.getAmount().getValue() +

@@ -2,7 +2,6 @@ package ru.netology.moneytransferservice;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,18 +14,20 @@ import ru.netology.moneytransferservice.entity.OperationData;
 import ru.netology.moneytransferservice.repository.OperationRepository;
 import ru.netology.moneytransferservice.service.OperationService;
 import ru.netology.moneytransferservice.util.ResponseUtil;
+
 import java.util.UUID;
 
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class OperationServiceTest {
+public class OperationServiceUnitTest {
     @MockBean
     OperationRepository operationRepository;
 
     @Autowired
     private OperationService operationService;
 
+    // TEST INPUT DATA
     private static final String DATA_CARD_FROM_NUMBER = "1111111111111111";
     private static final String DATA_CARD_FROM_CVV = "111";
     private static final String DATA_CARD_FROM_VALID_TILL = "11/21";
@@ -35,31 +36,33 @@ public class OperationServiceTest {
     private static final int AMOUNT_VALUE = 1000;
     private static final String VERIFICATION_CODE = "0000";
     private static final String OPERATION_ID = "12345f-12345";
+    private static final int NONE_ID = 0;
+
+    // RESPONSES
     private static final String MESSAGE_ERROR_INPUT = "Error input data";
     private static final String MESSAGE_ERROR_OPERATION = "Not found operation data";
     private static final String MESSAGE_SUCCESS_CONFIRMATION = "Success confirmation";
-    private static final int NONE_ID = 0;
 
+
+    // SUCCESS CREATE OPERATION
     @Test
-    void createOperation() {
-        TransferMoneyRequest transferMoneyRequestResult = getTransferMoneyRequest();
+    void createOperation_WhenSuccessCreateOperationResult() {
+        TransferMoneyRequest transferMoneyRequest = getTransferMoneyRequest();
 
-        OperationData testResult = operationService.createOperation(transferMoneyRequestResult);
+        OperationData testResult = operationService.createOperation(transferMoneyRequest);
 
         Assertions.assertTrue(isUUID(testResult.getOperationId()));
         Assertions.assertEquals(VERIFICATION_CODE, testResult.getCode());
-        Assertions.assertEquals(transferMoneyRequestResult, testResult.getTransferMoneyRequest());
+        Assertions.assertEquals(transferMoneyRequest, testResult.getTransferMoneyRequest());
     }
 
     // SUCCESS CONFIRMATION
     @Test
-    void confirmOperationRequestSuccessConfirmation() {
-        Response successConfirmationResult =
-                ResponseUtil.getResponse(HttpStatus.OK, MESSAGE_SUCCESS_CONFIRMATION, NONE_ID)
-                        .setOperationId(OPERATION_ID);
+    void confirmOperationRequest_WhenSuccessConfirmationResult() {
+        Response successConfirmationResult = ResponseUtil.getResponse(HttpStatus.OK, MESSAGE_SUCCESS_CONFIRMATION, NONE_ID)
+                .setOperationId(OPERATION_ID);
 
-        OperationData operationData =
-                new OperationData(OPERATION_ID, VERIFICATION_CODE, getTransferMoneyRequest());
+        OperationData operationData = new OperationData(OPERATION_ID, VERIFICATION_CODE, getTransferMoneyRequest());
 
         when(operationRepository.getOperation(OPERATION_ID)).thenReturn(operationData);
 
@@ -70,9 +73,8 @@ public class OperationServiceTest {
 
     // OPERATION NOT FOUND
     @Test
-    void confirmOperationRequestNotFound() {
-        Response operationNotFoundResult =
-                ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_OPERATION, NONE_ID);
+    void confirmOperationRequest_WhenOperationNotFoundResult() {
+        Response operationNotFoundResult = ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_OPERATION, NONE_ID);
 
         when(operationRepository.getOperation(OPERATION_ID)).thenReturn(null);
 
@@ -81,14 +83,12 @@ public class OperationServiceTest {
         Assertions.assertEquals(operationNotFoundResult, testResult);
     }
 
-    // WRONG VERIFICATION CODE
+    // ERROR VERIFICATION CODE
     @Test
-    void confirmOperationRequestWrongCode() {
-        Response wrongVerificationCodeResult = ResponseUtil
-                .getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
+    void confirmOperationRequest_WhenErrorVerificationCodeResult() {
+        Response wrongVerificationCodeResult = ResponseUtil.getResponse(HttpStatus.BAD_REQUEST, MESSAGE_ERROR_INPUT, NONE_ID);
 
-        OperationData operationData =
-                new OperationData(OPERATION_ID, VERIFICATION_CODE, getTransferMoneyRequest());
+        OperationData operationData = new OperationData(OPERATION_ID, VERIFICATION_CODE, getTransferMoneyRequest());
 
         when(operationRepository.getOperation(OPERATION_ID)).thenReturn(operationData.setCode(""));
 
